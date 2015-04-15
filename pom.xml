@@ -1,0 +1,48 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.apache.pdfbox</groupId>
+		<artifactId>pdfbox-parent</artifactId>
+		<version>1.8.9</version>
+		<relativePath></relativePath>
+	</parent>
+	<artifactId>cryptobox</artifactId>
+	<version>1.8.10-SNAPSHOT</version>
+
+	<name>Apache CryptoBox</name>
+	<description>
+      The Apache Preflight library is an open source Java tool that implements 
+      a parser compliant with the ISO-19005 (PDF/A) specification. Preflight is a 
+      subproject of Apache PDFBox.
+  </description>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>1.8.9</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>jempbox</artifactId>
+					<groupId>org.apache.pdfbox</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>fontbox</artifactId>
+					<groupId>org.apache.pdfbox</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bctsp-jdk15</artifactId>
+			<version>1.44</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+</project>
