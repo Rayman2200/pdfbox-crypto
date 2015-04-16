@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/Rayman2200/pdfbox-crypto.svg?branch=1.8)](https://travis-ci.org/Rayman2200/pdfbox-crypto)
+
 ===================================================
 Apache PDFBox <http://pdfbox.apache.org/>
 ===================================================
