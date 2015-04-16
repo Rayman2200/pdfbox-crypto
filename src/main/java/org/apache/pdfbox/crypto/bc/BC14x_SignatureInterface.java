@@ -30,23 +30,32 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.pdfbox.crypto.core.KeyProvider;
+import org.apache.pdfbox.crypto.core.SignatureProvider;
 import org.apache.pdfbox.exceptions.SignatureException;
 import org.apache.pdfbox.pdmodel.interactive.digitalsignature.SignatureInterface;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
-import org.bouncycastle.cms.CMSSignedGenerator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+/**
+ * A BouncyCastle 1.4x implementation of the SignatureInterface. It is guaranteed compatible up to BouncyCastle 1.46.
+ * Higher versions will get an own implementation.
+ * 
+ * @author Thomas Chojecki
+ */
 public class BC14x_SignatureInterface implements SignatureInterface
 {
   private final KeyProvider keyProvider;
+  
+  private final SignatureProvider signatureProvider;
 
   protected static String cryptoProvider = BouncyCastleProvider.PROVIDER_NAME;
 
-  public BC14x_SignatureInterface(KeyProvider keyProvider)
+  public BC14x_SignatureInterface(KeyProvider keyProvider, SignatureProvider signatureProvider)
   {
     this.keyProvider = keyProvider;
+    this.signatureProvider = signatureProvider;
   }
 
   public byte[] sign(InputStream content) throws SignatureException, IOException
@@ -59,8 +68,13 @@ public class BC14x_SignatureInterface implements SignatureInterface
     try
     {
       certStore = CertStore.getInstance("Collection", new CollectionCertStoreParameters(certChainAsList), cryptoProvider);
-      gen.addSigner(keyProvider.getPrivKey(), (X509Certificate) keyProvider.getCertificateChain()[0], CMSSignedGenerator.DIGEST_SHA256);
+      gen.addSigner(keyProvider.getPrivKey(), 
+          (X509Certificate) keyProvider.getCertificateChain()[0], 
+          signatureProvider.getDigestAlgorithm(),
+          signatureProvider.getAttributeContainer().getSignedAttributes(), 
+          signatureProvider.getAttributeContainer().getUnsignedAttributes());
       gen.addCertificatesAndCRLs(certStore);
+      
       CMSSignedData signedData = gen.generate(input, false, keyProvider.getKeyCrypoProvider());
       return signedData.getEncoded();
     }
@@ -85,5 +99,4 @@ public class BC14x_SignatureInterface implements SignatureInterface
       throw new SignatureException(e);
     }
   }
-
 }

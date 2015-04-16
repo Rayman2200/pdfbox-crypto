@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.pdfbox.crypto;
 
 import java.io.File;
@@ -8,6 +24,7 @@ import java.util.Calendar;
 
 import org.apache.pdfbox.crypto.bc.BC14x_SignatureInterface;
 import org.apache.pdfbox.crypto.core.KeyProvider;
+import org.apache.pdfbox.crypto.core.SignatureProvider;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.exceptions.SignatureException;
 import org.apache.pdfbox.io.RandomAccessFile;
@@ -21,6 +38,8 @@ public class SignatureBuilder
   protected PDCrypto crypto;
 
   private KeyProvider keyProvider;
+
+  private SignatureProvider signatureProvider;
 
   private String signerName;
 
@@ -40,6 +59,12 @@ public class SignatureBuilder
   public SignatureBuilder setKeyProvider(KeyProvider keyProvider)
   {
     this.keyProvider = keyProvider;
+    return this;
+  }
+
+  public SignatureBuilder setSignatureProvider(SignatureProvider signatureProvider)
+  {
+    this.signatureProvider = signatureProvider;
     return this;
   }
 
@@ -75,7 +100,7 @@ public class SignatureBuilder
 
   public void sign(File outputDocument) throws IllegalArgumentException, COSVisitorException, IOException, SignatureException
   {
-    BC14x_SignatureInterface sigInterface = new BC14x_SignatureInterface(keyProvider);
+    BC14x_SignatureInterface sigInterface = new BC14x_SignatureInterface(keyProvider, signatureProvider);
 
     byte[] buffer = new byte[8 * 1024];
     if (!crypto.pdfFile.exists())

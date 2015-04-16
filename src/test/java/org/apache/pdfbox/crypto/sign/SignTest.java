@@ -29,6 +29,7 @@ import java.security.UnrecoverableKeyException;
 
 import org.apache.pdfbox.crypto.PDCrypto;
 import org.apache.pdfbox.crypto.core.KeyProvider;
+import org.apache.pdfbox.crypto.core.SignatureProvider;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.exceptions.SignatureException;
 import org.apache.pdfbox.pdmodel.interactive.digitalsignature.SignatureOptions;
@@ -60,6 +61,7 @@ public class SignTest
       IllegalArgumentException, COSVisitorException, SignatureException
   {
     KeyProvider keyProvider = KeyProvider.getInstance(keystore);
+    SignatureProvider signatureProvider = SignatureProvider.getInstance("SHA256withRSA");
     SignatureOptions options;
     InputStream stream = SignTest.class.getResourceAsStream("/unsignedPDF/LibreOffice_4_3_Sample.pdf");
 
@@ -70,7 +72,11 @@ public class SignTest
     try
     {
       cryptoEngine = PDCrypto.load(stream);
-      cryptoEngine.createSignatureBuilder().setKeyProvider(keyProvider).setSigernName("SignerName").sign(new File(outputDir, "Sample_signed.pdf"));;
+      cryptoEngine.createSignatureBuilder().
+                   setKeyProvider(keyProvider).
+                   setSignatureProvider(signatureProvider).
+                   setSigernName("SignerName").
+                   sign(new File(outputDir, "Sample_signed.pdf"));;
     }
     finally
     {
