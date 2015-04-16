@@ -4,24 +4,23 @@
 	<parent>
 		<groupId>org.apache.pdfbox</groupId>
 		<artifactId>pdfbox-parent</artifactId>
-		<version>1.8.9</version>
+		<version>1.8.10-SNAPSHOT</version>
 		<relativePath></relativePath>
 	</parent>
 	<artifactId>cryptobox</artifactId>
-	<version>1.8.10-SNAPSHOT</version>
 
 	<name>Apache CryptoBox</name>
 	<description>
-      The Apache Preflight library is an open source Java tool that implements 
-      a parser compliant with the ISO-19005 (PDF/A) specification. Preflight is a 
-      subproject of Apache PDFBox.
+      The Apache CryptoBox library is an open source Java tool that provide a sign and verify engine 
+      for the Apache PDFBox. CryptoBox is a subproject of Apache PDFBox.
   </description>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
-			<version>1.8.9</version>
+			<version>${project.version}</version>
+			<!-- unburden the cryptobox for signing -->
 			<exclusions>
 				<exclusion>
 					<artifactId>jempbox</artifactId>
