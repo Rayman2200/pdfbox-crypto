@@ -16,11 +16,15 @@
  */
 package org.apache.pdfbox.crypto.core;
 
+import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.crypto.bc.AttributeContainer;
+import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
 import org.bouncycastle.cms.CMSSignedGenerator;
 
 /**
  * The provides hold all necessary elements that are needed for signature creation.
+ * 
+ * It is based on the lowest level of signature creation and will complaint to the ISO 32000-1:2008 spezification.
  * 
  * @author Thomas Chojecki
  */
@@ -32,6 +36,8 @@ public class SignatureProvider
   protected String crypoProvider;
   protected String signatureAlgorithm;
   protected String digestAlgorithm;
+  protected COSName filter;
+  protected COSName subfilter;
   protected AttributeContainer attributeContainer;
 
   protected SignatureProvider()
@@ -39,14 +45,14 @@ public class SignatureProvider
     // Set some default values
     setDigestAlgorithm(CMSSignedGenerator.DIGEST_SHA256);
     setCrypoProvider(DEFAULT_KEY_CRYPTO_PROVIDER);
-    setAttributeContainer(new AttributeContainer());
+    setFilter(PDSignature.FILTER_ADOBE_PPKLITE);
+    setSubfilter(PDSignature.SUBFILTER_ADBE_PKCS7_DETACHED);
+    setAttributeContainer(new AttributeContainer(this));
   }
 
-  public static SignatureProvider getInstance(String signatureAlgoString)
+  public static SignatureProvider getInstance()
   {
-    SignatureProvider signatureProvider = new SignatureProvider();
-    signatureProvider.setSignatureAlgorithm(signatureAlgoString);
-    return signatureProvider;
+    return new SignatureProvider();
   }
 
   public String getCrypoProvider()
@@ -87,6 +93,26 @@ public class SignatureProvider
   public void setAttributeContainer(AttributeContainer attributeContainer)
   {
     this.attributeContainer = attributeContainer;
+  }
+
+  public COSName getFilter()
+  {
+    return filter;
+  }
+
+  public void setFilter(COSName filter)
+  {
+    this.filter = filter;
+  }
+
+  public COSName getSubfilter()
+  {
+    return subfilter;
+  }
+
+  public void setSubfilter(COSName subfilter)
+  {
+    this.subfilter = subfilter;
   }
 
 }

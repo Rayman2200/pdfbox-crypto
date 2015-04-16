@@ -69,4 +69,13 @@ public class CoreHelper
     }
     return obj;
   }
+
+  public static <T> T[] requireNonNullOrEmpty(T[] obj)
+  {
+    if (obj == null || obj.length == 0)
+    {
+      throw new NullPointerException();
+    }
+    return obj;
+  }
 }

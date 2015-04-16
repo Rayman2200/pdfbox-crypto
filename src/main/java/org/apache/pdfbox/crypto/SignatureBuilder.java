@@ -30,6 +30,7 @@ import org.apache.pdfbox.exceptions.SignatureException;
 import org.apache.pdfbox.io.RandomAccessFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
+import org.apache.pdfbox.pdmodel.interactive.digitalsignature.SignatureInterface;
 import org.apache.pdfbox.pdmodel.interactive.digitalsignature.SignatureOptions;
 
 public class SignatureBuilder
@@ -100,7 +101,7 @@ public class SignatureBuilder
 
   public void sign(File outputDocument) throws IllegalArgumentException, COSVisitorException, IOException, SignatureException
   {
-    BC14x_SignatureInterface sigInterface = new BC14x_SignatureInterface(keyProvider, signatureProvider);
+    SignatureInterface sigInterface = new BC14x_SignatureInterface(keyProvider, signatureProvider);
 
     byte[] buffer = new byte[8 * 1024];
     if (!crypto.pdfFile.exists())
@@ -130,9 +131,8 @@ public class SignatureBuilder
 
       // create signature dictionary
       PDSignature signature = new PDSignature();
-      signature.setFilter(PDSignature.FILTER_ADOBE_PPKLITE); // default filter
-      // subfilter for basic and PAdES Part 2 signatures
-      signature.setSubFilter(PDSignature.SUBFILTER_ADBE_PKCS7_DETACHED);
+      signature.setFilter(signatureProvider.getFilter());
+      signature.setSubFilter(signatureProvider.getSubfilter());
       signature.setName(signerName);
       signature.setLocation(signerLocation);
       signature.setReason(signerReason);

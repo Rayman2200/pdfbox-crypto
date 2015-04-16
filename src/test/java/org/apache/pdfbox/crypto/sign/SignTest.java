@@ -30,9 +30,9 @@ import java.security.UnrecoverableKeyException;
 import org.apache.pdfbox.crypto.PDCrypto;
 import org.apache.pdfbox.crypto.core.KeyProvider;
 import org.apache.pdfbox.crypto.core.SignatureProvider;
+import org.apache.pdfbox.crypto.core.specifications.PAdES_B_Provider;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.exceptions.SignatureException;
-import org.apache.pdfbox.pdmodel.interactive.digitalsignature.SignatureOptions;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -43,9 +43,14 @@ public class SignTest
 
   protected static KeyStore keystore;
 
+  private final static String SIGNATURE_ALGORITHM = "SHA256withRSA";
+
+  private final static File OUTPUT_FOLDER = new File("target/test-output/");
+
   @BeforeClass
   public static void prepareTestClass() throws Exception
   {
+    OUTPUT_FOLDER.mkdirs();
     Security.addProvider(new BouncyCastleProvider());
     keystore = KeyStoreHelper.generateKeyStore();
   }
@@ -61,12 +66,9 @@ public class SignTest
       IllegalArgumentException, COSVisitorException, SignatureException
   {
     KeyProvider keyProvider = KeyProvider.getInstance(keystore);
-    SignatureProvider signatureProvider = SignatureProvider.getInstance("SHA256withRSA");
-    SignatureOptions options;
+    SignatureProvider signatureProvider = SignatureProvider.getInstance();
+    signatureProvider.setSignatureAlgorithm(SIGNATURE_ALGORITHM);
     InputStream stream = SignTest.class.getResourceAsStream("/unsignedPDF/LibreOffice_4_3_Sample.pdf");
-
-    File outputDir = new File("target/test/output/");
-    outputDir.mkdirs();
 
     PDCrypto cryptoEngine = null;
     try
@@ -76,7 +78,35 @@ public class SignTest
                    setKeyProvider(keyProvider).
                    setSignatureProvider(signatureProvider).
                    setSigernName("SignerName").
-                   sign(new File(outputDir, "Sample_signed.pdf"));;
+                   sign(new File(OUTPUT_FOLDER, "Sample_signed.pdf"));;
+    }
+    finally
+    {
+      closeStream(stream);
+    }
+
+  }
+  
+  @Test
+  public void testPAdES_B_Signature() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException, IOException,
+      IllegalArgumentException, COSVisitorException, SignatureException
+  {
+    KeyProvider keyProvider = KeyProvider.getInstance(keystore);
+    
+    SignatureProvider signatureProvider = PAdES_B_Provider.getInstance(keyProvider);
+    signatureProvider.setSignatureAlgorithm(SIGNATURE_ALGORITHM);
+    
+    InputStream stream = SignTest.class.getResourceAsStream("/unsignedPDF/LibreOffice_4_3_Sample.pdf");
+
+    PDCrypto cryptoEngine = null;
+    try
+    {
+      cryptoEngine = PDCrypto.load(stream);
+      cryptoEngine.createSignatureBuilder().
+                   setKeyProvider(keyProvider).
+                   setSignatureProvider(signatureProvider).
+                   setSigernName("SignerName").
+                   sign(new File(OUTPUT_FOLDER, "Sample_PAdES_B_signed.pdf"));;
     }
     finally
     {

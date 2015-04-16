@@ -16,19 +16,35 @@
  */
 package org.apache.pdfbox.crypto.bc;
 
+import static org.apache.pdfbox.crypto.bc.CryptoHelper.getAlgorithmIdentifierForOID;
+import static org.apache.pdfbox.crypto.core.CoreHelper.requireNonNull;
+import static org.apache.pdfbox.crypto.core.CoreHelper.requireNonNullOrEmpty;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.X509Certificate;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.apache.pdfbox.crypto.core.SignatureProvider;
 import org.bouncycastle.asn1.DERObjectIdentifier;
+import org.bouncycastle.asn1.DERSet;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.CMSAttributes;
+import org.bouncycastle.asn1.ess.ESSCertIDv2;
+import org.bouncycastle.asn1.ess.SigningCertificateV2;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.cms.CMSAttributeTableGenerationException;
 import org.bouncycastle.cms.CMSAttributeTableGenerator;
 import org.bouncycastle.cms.DefaultSignedAttributeTableGenerator;
 
 /**
- * Provide a central point for configuring the cms signed and unsigned attributes.
+ * Provide a central point for configuring the cms signed and unsigned attributes. Uses BouncyCastle as backend.
  * 
  * @author Thomas Chojecki
  */
@@ -39,10 +55,18 @@ public class AttributeContainer
 
   private Hashtable<DERObjectIdentifier, Attribute> unsignedAttributes;
 
+  private SignatureProvider signatureProvider;
+
   public AttributeContainer()
   {
     signedAttributes = new Hashtable<DERObjectIdentifier, Attribute>();
     unsignedAttributes = new Hashtable<DERObjectIdentifier, Attribute>();
+  }
+
+  public AttributeContainer(SignatureProvider signatureProvider)
+  {
+    this();
+    this.signatureProvider = signatureProvider;
   }
 
   @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -97,13 +121,13 @@ public class AttributeContainer
    * Add a additional signed attribute to the container. For common signed attributes this container provide convenience
    * methods.
    * 
-   * @param objectIdentifier the identifier for the attribute
-   * @param attribute is the attribute that should be added for the given object identifier.
+   * @param attribute is the signed attribute that should be added to the signed attributes store.
    * @return the AttributeContainer for method chaining
    */
-  public AttributeContainer addSignedAttribute(DERObjectIdentifier objectIdentifier, Attribute attribute)
+  public AttributeContainer addSignedAttribute(Attribute attribute)
   {
-    signedAttributes.put(objectIdentifier, attribute);
+    requireNonNull(attribute);
+    signedAttributes.put(attribute.getAttrType(), attribute);
     return this;
   }
 
@@ -111,13 +135,62 @@ public class AttributeContainer
    * Add a additional SignedAttribute to the container. For common unsigned attributes this container provide
    * convenience methods.
    * 
-   * @param objectIdentifier the identifier for the attribute
-   * @param attribute is the attribute that should be added for the given object identifier.
+   * @param attribute is the unsigned attribute that should be added for the unsigned attributes store.
    * @return the AttributeContainer for method chaining
    */
-  public AttributeContainer addUnsignedAttribute(DERObjectIdentifier objectIdentifier, Attribute attribute)
+  public AttributeContainer addUnsignedAttribute(Attribute attribute)
   {
-    unsignedAttributes.put(objectIdentifier, attribute);
+    requireNonNull(attribute);
+    unsignedAttributes.put(attribute.getAttrType(), attribute);
+    return this;
+  }
+
+  /**
+   * Set one or more signing certificates. Each call will overwrite the previous added certificates.
+   * 
+   * @param x509cert one or more X509Certificates that should be add to signed attributes.
+   * @return
+   */
+  public AttributeContainer setSigningCertificate(Certificate... x509cert)
+  {
+    requireNonNullOrEmpty(x509cert);
+
+    try
+    {
+      MessageDigest md = MessageDigest.getInstance("SHA-256", signatureProvider.getCrypoProvider());
+
+      ESSCertIDv2[] essCertIds = new ESSCertIDv2[x509cert.length];
+      for (int i = 0; i < x509cert.length; i++)
+      {
+        if ((x509cert[i] instanceof X509Certificate))
+        {
+          X509Certificate x509Certificate = (X509Certificate) x509cert[i];
+          byte[] cert = x509Certificate.getEncoded();
+          byte[] digest = md.digest(cert);
+          md.reset();
+
+          essCertIds[i] = new ESSCertIDv2(getAlgorithmIdentifierForOID(NISTObjectIdentifiers.id_sha256), digest);
+        }
+        else
+        {
+          // no X509Certificate
+        }
+      }
+      SigningCertificateV2 sCV2 = new SigningCertificateV2(essCertIds);
+      addSignedAttribute(new Attribute(PKCSObjectIdentifiers.id_aa_signingCertificateV2, new DERSet(sCV2)));
+    }
+    catch (CertificateEncodingException e)
+    {
+      // Certificate parsing problem
+    }
+    catch (NoSuchAlgorithmException e)
+    {
+      // unknown algorithm
+    }
+    catch (NoSuchProviderException e)
+    {
+      // unknown provider
+    }
     return this;
   }
 
