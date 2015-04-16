@@ -69,7 +69,7 @@ public class KeyStoreHelper
     Certificate trustCert = createCertificate("CN=CA", "CN=CA", publicKey, privateKey);
     Certificate[] outChain = { createCertificate("CN=Client", "CN=CA", publicKey, privateKey), trustCert };
 
-    KeyStore keystore = KeyStore.getInstance("PKCS12");
+    KeyStore keystore = KeyStore.getInstance("PKCS12","BC");
     keystore.load(null, "secret".toCharArray());
     keystore.setKeyEntry(ALIAS, privateKey, "".toCharArray(), outChain);
     return keystore;

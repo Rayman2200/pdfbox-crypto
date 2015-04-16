@@ -26,7 +26,6 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.Objects;
 
 /**
  * The provides hold all necessary elements like the private key, certificates etc. for the sign engine.
@@ -40,6 +39,15 @@ public class KeyProvider
 
   protected PrivateKey privKey;
   protected Certificate[] certificateChain;
+
+  /**
+   * Provider that shall be used for cryptographic operations on the key. It mostly is the same provider that is used
+   * for normal cryptographic operations like digesting, but in some cases the PrivateKey / Key from the keystore isn't
+   * a JCE Keystore. This is the case, if the user work with smartcards and use a special keystore.
+   * 
+   * There are also differences between the standard JCE provider that comes with java and e.g. BouncyCastle, when it
+   * comes to handling keystores.
+   */
   protected String keyCrypoProvider;
 
   protected KeyProvider()
@@ -49,7 +57,7 @@ public class KeyProvider
   {
     for (Enumeration<String> aliases = keyStore.aliases(); aliases.hasMoreElements();)
     {
-      return getInstance(keyStore, aliases.nextElement(), new char[0], null);
+      return getInstance(keyStore, aliases.nextElement(), new char[0], keyStore.getProvider().getName());
     }
 
     throw new IllegalArgumentException("No alias found in keystore");
