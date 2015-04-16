@@ -17,12 +17,12 @@
 package org.apache.pdfbox.crypto;
 
 import static org.apache.pdfbox.crypto.core.CoreHelper.copy;
+import static org.apache.pdfbox.crypto.core.CoreHelper.requireNonNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Objects;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -49,7 +49,7 @@ public class PDCrypto
 
   public static PDCrypto load(File pdf)
   {
-    Objects.requireNonNull(pdf);
+    requireNonNull(pdf);
 
     PDCrypto pdCrypto = new PDCrypto();
     pdCrypto.pdfFile = pdf;
@@ -59,7 +59,7 @@ public class PDCrypto
 
   public static PDCrypto load(InputStream pdf) throws IOException
   {
-    Objects.requireNonNull(pdf);
+    requireNonNull(pdf);
     PDCrypto pdCrypto = new PDCrypto();
     pdCrypto.pdfFile = File.createTempFile("PDF", ".pdf");
 
@@ -70,7 +70,7 @@ public class PDCrypto
 
   public static PDCrypto load(PDDocument pdf)
   {
-    Objects.requireNonNull(pdf);
+    requireNonNull(pdf);
     throw new UnsupportedOperationException("Not yet implemented.");
   }
 

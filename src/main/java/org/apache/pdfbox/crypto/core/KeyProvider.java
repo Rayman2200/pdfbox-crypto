@@ -16,6 +16,8 @@
  */
 package org.apache.pdfbox.crypto.core;
 
+import static org.apache.pdfbox.crypto.core.CoreHelper.requireNonNull;
+
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -61,8 +63,8 @@ public class KeyProvider
 
   public static KeyProvider getInstance(PrivateKey privKey, Certificate[] certificateChain, final String keyCryptoProvider)
   {
-    Objects.requireNonNull(certificateChain);
-    Objects.requireNonNull(privKey);
+    requireNonNull(certificateChain);
+    requireNonNull(privKey);
 
     KeyProvider kp = new KeyProvider();
     kp.setCertificateChain(certificateChain);

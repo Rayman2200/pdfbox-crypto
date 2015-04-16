@@ -20,7 +20,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Objects;
 
 public class CoreHelper
 {
@@ -41,8 +40,8 @@ public class CoreHelper
 
   public static void copy(InputStream in, OutputStream out) throws IOException
   {
-    Objects.requireNonNull(in);
-    Objects.requireNonNull(out);
+    requireNonNull(in);
+    requireNonNull(out);
 
     byte[] buffer = new byte[1024];
     try
@@ -60,5 +59,14 @@ public class CoreHelper
       closeStream(out);
 
     }
+  }
+
+  public static <T> T requireNonNull(T obj)
+  {
+    if (obj == null)
+    {
+      throw new NullPointerException();
+    }
+    return obj;
   }
 }
