@@ -14,15 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.pdfbox.crypto;
+package org.apache.pdfbox.crypto.core;
 
-import org.apache.pdfbox.crypto.sign.SignTest;
-import org.apache.pdfbox.crypto.verify.VerifyTest;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
-
-@RunWith(Suite.class)
-@SuiteClasses({ SignTest.class , VerifyTest.class })
-public class TestAll
-{}
+/**
+ * <p>
+ * The interface bundle all needed interfaces and abstract classes so the crypto engine can be replaced at any time. It
+ * help supporting a wide range crypto libraries and different versions of them.
+ * </p>
+ * <p>
+ * E.g. BouncyCastle do heavy interface changes, so newer versions can break the implementation, so we try to support
+ * one older version for the pdfbox 1.8.x and a newer one for pdfbox 2.x.
+ * </p>
+ * <p>
+ * Other crypto libraries can also be provided through this interface but need to be implemented.
+ * </p>
+ * 
+ * @author Thomas Chojecki
+ */
+public interface CryptoEngine
+{
+  // TODO
+}

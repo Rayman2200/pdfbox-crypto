@@ -16,10 +16,14 @@
  */
 package org.apache.pdfbox.crypto.bc;
 
+import java.io.InputStream;
 import java.util.HashMap;
 
+import org.apache.pdfbox.pdfwriter.COSFilterInputStream;
+import org.apache.pdfbox.pdmodel.interactive.digitalsignature.PDSignature;
 import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.bouncycastle.cms.CMSProcessable;
 
 /**
  * @author Thomas Chojecki
@@ -45,4 +49,8 @@ public class CryptoHelper
     return algorithmIdentifier;
   }
 
+  public static CMSProcessable getContent(PDSignature signature, InputStream input)
+  {
+    return new CMSProcessableInputStream(new COSFilterInputStream(input, signature.getByteRange()));
+  }
 }

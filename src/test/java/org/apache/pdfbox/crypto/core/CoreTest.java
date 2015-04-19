@@ -16,15 +16,20 @@
  */
 package org.apache.pdfbox.crypto.core;
 
+import static org.apache.pdfbox.crypto.core.CoreHelper.requireNonNullOrEmpty;
 import static org.junit.Assert.assertEquals;
 
+import java.io.IOException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.security.UnrecoverableKeyException;
+import java.util.Arrays;
+import java.util.Random;
 
 import org.apache.pdfbox.crypto.sign.KeyStoreHelper;
+import org.apache.pdfbox.pdfwriter.COSFilterInputStream;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,7 +55,39 @@ public class CoreTest
     KeyProvider kp1 = KeyProvider.getInstance(keyStore);
     KeyProvider kp2 = KeyProvider.getInstance(keyStore);
     assertEquals("Both keyprovider should be equal", kp1, kp2);
+  }
 
+  @Test
+  public void testRangeInputStream() throws IOException
+  {
+    byte[] byteArray = new byte[100];
+    new Random().nextBytes(byteArray);
+
+    int[] byteRange = new int[] { 0, 20, 80, 20 };
+
+    byte[] full = Arrays.copyOfRange(byteArray, 80, byteArray.length);
+
+//    int a =byteRange[0] + byteRange[1];
+//    int b2 = byteRange[2] + byteRange[3];
+//    System.out.println(a);
+//    System.out.println(b2);
+    
+    byte[] part1_arrayCopy = Arrays.copyOfRange(byteArray, byteRange[0], byteRange[0] + byteRange[1]);
+    byte[] part2_arrayCopy = Arrays.copyOfRange(byteArray, byteRange[2], byteRange[2] + byteRange[3]);
+
+    COSFilterInputStream cosFilterInputStream = new COSFilterInputStream(byteArray, byteRange);
+    byte[] byteArray2 = cosFilterInputStream.toByteArray();
+    
+    assertEquals(byteRange[3], part1_arrayCopy.length);
+    
+  }
+
+  @Test
+  public void testCertificateHelper() throws UnrecoverableKeyException, KeyStoreException, NoSuchAlgorithmException
+  {
+    KeyProvider kp1 = KeyProvider.getInstance(keyStore);
+    CertificateHelper certHelper = new CertificateHelper(requireNonNullOrEmpty(kp1.getCertificateChain())[0]);
+    System.out.println(certHelper);
   }
 
 }

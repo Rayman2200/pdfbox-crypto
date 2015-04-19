@@ -38,7 +38,7 @@ public class SignatureProvider
   protected String digestAlgorithm;
   protected COSName filter;
   protected COSName subfilter;
-  protected AttributeContainer attributeContainer;
+  protected AttributeContainer attributeContainer; // FIXME Remove dependency to BouncyCastle
 
   protected SignatureProvider()
   {

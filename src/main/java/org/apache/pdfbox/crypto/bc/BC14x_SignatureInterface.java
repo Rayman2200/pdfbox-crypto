@@ -47,7 +47,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 public class BC14x_SignatureInterface implements SignatureInterface
 {
   private final KeyProvider keyProvider;
-  
+
   private final SignatureProvider signatureProvider;
 
   protected static String cryptoProvider = BouncyCastleProvider.PROVIDER_NAME;

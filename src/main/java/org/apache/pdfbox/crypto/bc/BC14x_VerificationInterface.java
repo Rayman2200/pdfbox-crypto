@@ -14,15 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.pdfbox.crypto;
+package org.apache.pdfbox.crypto.bc;
 
-import org.apache.pdfbox.crypto.sign.SignTest;
-import org.apache.pdfbox.crypto.verify.VerifyTest;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+import org.apache.pdfbox.crypto.PDCrypto;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-@RunWith(Suite.class)
-@SuiteClasses({ SignTest.class , VerifyTest.class })
-public class TestAll
-{}
+/**
+ * A BouncyCastle 1.4x implementation of the SignatureInterface. It is guaranteed compatible up to BouncyCastle 1.46.
+ * Higher versions will get an own implementation.
+ * 
+ * @author Thomas Chojecki
+ */
+public class BC14x_VerificationInterface
+{
+  protected static String cryptoProvider = BouncyCastleProvider.PROVIDER_NAME;
+
+  private PDCrypto crypto;
+  
+  
+  public BC14x_VerificationInterface(PDCrypto crypto)
+  {
+    this.crypto = crypto;
+  }
+
+  
+}

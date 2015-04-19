@@ -14,15 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.pdfbox.crypto;
+package org.apache.pdfbox.crypto.exceptions;
 
-import org.apache.pdfbox.crypto.sign.SignTest;
-import org.apache.pdfbox.crypto.verify.VerifyTest;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+/**
+ * @author Thomas Chojecki
+ */
+public class ReportInitializationException extends Exception
+{
 
-@RunWith(Suite.class)
-@SuiteClasses({ SignTest.class , VerifyTest.class })
-public class TestAll
-{}
+  private static final long serialVersionUID = -1417770369281387825L;
+
+  public ReportInitializationException(String message)
+  {
+    super(message);
+  }
+
+  public ReportInitializationException(Throwable e)
+  {
+    super(e);
+  }
+
+  public ReportInitializationException(String message, Throwable e)
+  {
+    super(message, e);
+  }
+
+}

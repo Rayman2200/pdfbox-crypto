@@ -14,45 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.pdfbox.crypto;
+package org.apache.pdfbox.crypto.vr;
 
+import org.apache.pdfbox.crypto.VerificationReportBuilder;
 import org.apache.pdfbox.crypto.exceptions.ReportInitializationException;
-import org.apache.pdfbox.crypto.vr.VerificationReport;
-import org.apache.pdfbox.crypto.vr.VerificationReportFactory;
 
 /**
  * @author Thomas Chojecki
  */
-public class VerificationBuilder
+public interface VerificationReport
 {
+  public void setVerificationReportBuilder(VerificationReportBuilder verificationReportBuilder);
 
-  private VerificationReport report;
-  
-  private final VerificationReportBuilder reportBuilder;
+  public VerificationReport generateVerificationReport();
 
-  private final PDCrypto crypo;
-
-  private Class<? extends VerificationReport> reportClass;
-
-  VerificationBuilder(PDCrypto crypto)
-  {
-    this.crypo = crypto;
-    this.reportBuilder = new VerificationReportBuilder(crypto);
-  }
-
-  protected void prepareDocument()
-  {
-
-  }
-
-  public VerificationReport createVerificationReport() throws ReportInitializationException
-  {
-    return VerificationReportFactory.createReportForClass(reportClass, reportBuilder);
-  }
-
-  public VerificationBuilder setReportType(Class<? extends VerificationReport> report)
-  {
-    this.reportClass = report;
-    return this;
-  }
+  public void initReport() throws ReportInitializationException;
 }

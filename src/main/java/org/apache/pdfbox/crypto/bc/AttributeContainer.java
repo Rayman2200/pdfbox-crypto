@@ -149,7 +149,7 @@ public class AttributeContainer
    * Set one or more signing certificates. Each call will overwrite the previous added certificates.
    * 
    * @param x509cert one or more X509Certificates that should be add to signed attributes.
-   * @return
+   * @return the AttributeContainer for method chaining
    */
   public AttributeContainer setSigningCertificate(Certificate... x509cert)
   {

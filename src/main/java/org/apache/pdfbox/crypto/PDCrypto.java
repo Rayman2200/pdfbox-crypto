@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.pdfbox.crypto.core.CryptoEngine;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 /**
@@ -38,7 +39,9 @@ public class PDCrypto
 
   protected PDDocument doc;
 
-  protected File tempFolder = new File(System.getProperty("java.io.tmpdir"));
+  protected static File tempFolder = new File(System.getProperty("java.io.tmpdir"));
+
+  protected static CryptoEngine cryptoEngine;
 
   private PDCrypto()
   {}
@@ -62,8 +65,8 @@ public class PDCrypto
     requireNonNull(pdf);
     PDCrypto pdCrypto = new PDCrypto();
     pdCrypto.pdfFile = File.createTempFile("PDF", ".pdf");
-
     copy(pdf, new FileOutputStream(pdCrypto.pdfFile));
+    pdCrypto.doc = PDDocument.load(pdCrypto.pdfFile);
 
     return pdCrypto;
   }
@@ -92,12 +95,32 @@ public class PDCrypto
    * Global setter
    */
 
-  public void setTempFolder(File tempFolder)
+  public static void setTempFolder(File tf)
   {
-    this.tempFolder = tempFolder;
+    tempFolder = tf;
+  }
+
+  public static void setCryptoEngine(CryptoEngine ce)
+  {
+    cryptoEngine = ce;
   }
 
   /*
    * Getter / Setter
    */
+  public CryptoEngine getCryptoEngine()
+  {
+    return cryptoEngine;
+  }
+
+  public File getPdfFile()
+  {
+    return pdfFile;
+  }
+
+  public PDDocument getDoc()
+  {
+    return doc;
+  }
+
 }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://pdfbox.apache.org/schema/vr/simple_report"
+	xmlns:pba="http://pdfbox.apache.org/schema/vr/simple_report"
+	elementFormDefault="qualified">
+
+	<element name="Document">
+		<complexType>
+			<sequence>
+				<element name="FileName" type="string" />
+				<element name="FileSize" type="long" />
+				<element ref="pba:Signatures" />
+			</sequence>
+		</complexType>
+	</element>
+
+	<element name="Signatures">
+		<complexType>
+			<sequence>
+				<element name="Signature" type="pba:SignatureType"
+					minOccurs="1" maxOccurs="unbounded" />
+			</sequence>
+		</complexType>
+	</element>
+
+	<complexType name="SignatureType">
+		<sequence>
+			<element name="SigningTime" type="dateTime" />
+			<element name="SignerName" type="string" />
+			<element name="SignerLocation" type="string" />
+			<element name="SignerReason" type="string" />
+			<element name="MathematicalyValid" type="boolean" />
+			<element ref="pba:Certificates" />
+		</sequence>
+	</complexType>
+
+	<element name="Certificates">
+		<complexType>
+			<sequence>
+				<element name="Certificate" type="string" minOccurs="1"
+					maxOccurs="unbounded" />
+			</sequence>
+		</complexType>
+	</element>
+
+</schema>

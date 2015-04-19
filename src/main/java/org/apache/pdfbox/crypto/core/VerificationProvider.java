@@ -14,45 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.pdfbox.crypto.bc;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
-import org.bouncycastle.cms.CMSException;
-import org.bouncycastle.cms.CMSProcessable;
+package org.apache.pdfbox.crypto.core;
 
 /**
- * Wrap a InputStream into a CMSProcessable object for bouncy castle. It's an
- * alternative to the CMSProcessableByteArray.
+ * The provides hold all necessary elements that are needed for signature verification.
+ * It is based on the lowest level of signature creation and will complaint to the ISO 32000-1:2008 spezification.
  * 
  * @author Thomas Chojecki
  */
-public class CMSProcessableInputStream implements CMSProcessable
+public class VerificationProvider
 {
+  protected final static String DEFAULT_KEY_CRYPTO_PROVIDER = "BC"; // BouncyCastleProvider.PROVIDER_NAME
 
-  InputStream in;
+  protected String crypoProvider;
 
-  public CMSProcessableInputStream(InputStream is)
+  protected VerificationProvider()
   {
-    in = is;
+    // Set some default values
+    setCrypoProvider(DEFAULT_KEY_CRYPTO_PROVIDER);
   }
 
-  public Object getContent()
+  public static VerificationProvider getInstance()
   {
-    return in;
+    return new VerificationProvider();
   }
 
-  public void write(OutputStream out) throws IOException, CMSException
+  public String getCrypoProvider()
   {
-    // read the content only one time
-    byte[] buffer = new byte[8 * 1024];
-    int read;
-    while ((read = in.read(buffer)) != -1)
-    {
-      out.write(buffer, 0, read);
-    }
-    in.close();
+    return crypoProvider;
+  }
+
+  public void setCrypoProvider(String crypoProvider)
+  {
+    this.crypoProvider = crypoProvider;
   }
 }
