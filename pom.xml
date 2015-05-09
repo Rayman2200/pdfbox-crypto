@@ -4,8 +4,8 @@
 	<parent>
 		<groupId>org.apache.pdfbox</groupId>
 		<artifactId>pdfbox-parent</artifactId>
-		<version>1.8.10-SNAPSHOT</version>
-		<relativePath></relativePath>
+		<version>1.8.9</version>
+		<relativePath/>
 	</parent>
 	<artifactId>cryptobox</artifactId>
 
@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bctsp-jdk15</artifactId>
-			<!-- Due to heavy interface changes, we need to limit the version -->
+			<!-- Due to heavy interface changes in bouncy castle, we need to limit the version -->
 			<!-- <version>[1.44,1.46]</version> -->
 			<version>1.44</version>
 		</dependency>
