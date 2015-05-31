@@ -16,6 +16,7 @@
  */
 package org.apache.pdfbox.crypto;
 
+import org.apache.pdfbox.crypto.bc.VerificationResult;
 import org.apache.pdfbox.crypto.exceptions.ReportInitializationException;
 import org.apache.pdfbox.crypto.vr.VerificationReport;
 import org.apache.pdfbox.crypto.vr.VerificationReportFactory;
@@ -45,6 +46,10 @@ public class VerificationBuilder
 
   }
 
+  public VerificationResult verify() {
+    return null;
+  }
+  
   public VerificationReport createVerificationReport() throws ReportInitializationException
   {
     return VerificationReportFactory.createReportForClass(reportClass, reportBuilder);
